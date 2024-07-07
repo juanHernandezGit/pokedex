@@ -143,6 +143,7 @@ public class PokemonService {
         // Guarda cada EvolutionChainEntity asociado con el PokemonEntity guardado
         for (EvolutionChainDTO evolutionChainDTO : evolutionChains) {
             EvolutionChainEntity evolutionChain = new EvolutionChainEntity();
+            evolutionChain.setId(evolutionChainDTO.getId());
             evolutionChain.setName(evolutionChainDTO.getName());
             evolutionChain.setPokemon(savedPokemon);
             EvolutionChainEntity savedEvolutionChain = evolutionChainRepository.save(evolutionChain);

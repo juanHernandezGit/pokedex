@@ -74,11 +74,11 @@
 		</dependency>
 
 		<!-- SpringDoc OpenAPI -->
-        <dependency>
-            <groupId>org.springdoc</groupId>
-            <artifactId>springdoc-openapi-ui</artifactId>
-            <version>1.8.0</version>
-        </dependency>
+		<dependency>
+			<groupId>org.springdoc</groupId>
+			<artifactId>springdoc-openapi-ui</artifactId>
+			<version>1.8.0</version>
+		</dependency>
 
 		<!-- Actuator -->
 		<dependency>
@@ -154,8 +154,12 @@
 			<artifactId>jackson-annotations</artifactId>
 			<version>2.15.1</version>
 		</dependency>
-
-
+		<!-- Oracle -->
+		<dependency>
+			<groupId>com.oracle.database.jdbc</groupId>
+			<artifactId>ojdbc11</artifactId>
+			<version>21.1.0.0</version>
+		</dependency>
 	</dependencies>
 
 	<build>
