@@ -6,8 +6,10 @@ import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.apache.hc.client5.http.HttpResponseException;
 import org.apache.hc.client5.http.fluent.Request;
@@ -72,13 +74,18 @@ public class PokemonService {
             if (pokemonBd.isPresent()) {
                 // Cargar la cadena de evolucion desde la base de datos
                 Set<EvolutionChainEntity> evolutionChainEntities = evolutionChainRepository.findByPokemon(pokemonBd.get());
-                Set<EvolutionChainDTO> evolutionChains = new HashSet<>();
-                for (EvolutionChainEntity evolutionChainEntity : evolutionChainEntities) {
-                    EvolutionChainDTO evolutionChainDTO = new EvolutionChainDTO();
-                    evolutionChainDTO.setId(evolutionChainEntity.getId());
-                    evolutionChainDTO.setName(evolutionChainEntity.getName());
-                    evolutionChains.add(evolutionChainDTO);
-                }
+               
+               // Convertir a EvolutionChainDTO, ordenar por ID, y recolectar en un LinkedHashSet para mantener el orden
+                Set<EvolutionChainDTO> evolutionChains = evolutionChainEntities.stream()
+                    .map(evolutionChainEntity -> {
+                        EvolutionChainDTO evolutionChainDTO = new EvolutionChainDTO();
+                        evolutionChainDTO.setId(evolutionChainEntity.getId());
+                        evolutionChainDTO.setName(evolutionChainEntity.getName());
+                        return evolutionChainDTO;
+                    })
+                    .sorted((e1, e2) -> Long.compare(e1.getId(), e2.getId()))  // Ordenar por ID
+                    .collect(Collectors.toCollection(LinkedHashSet::new));  // Usar LinkedHashSet para mantener el orden
+
                 // Mapear la entidad Pokemon a DTO y devolver
                 return mapearAPokemonDTO(pokemonBd.get(), evolutionChains);
             }else {//Si no existe lo buscamos desde la api y continuamos el proceso.
@@ -131,7 +138,9 @@ public class PokemonService {
         if (evolutionChainApiResponse != null && evolutionChainApiResponse.getChain() != null) {
             recorrerCadenaEvolucion(evolutionChainApiResponse.getChain(), evolutionChains);
         }
-        return evolutionChains;
+        return evolutionChains.stream()
+                .sorted((e1, e2) -> Long.compare(e1.getId(), e2.getId()))
+                .collect(Collectors.toCollection(LinkedHashSet::new));
     }
 
     @Transactional
